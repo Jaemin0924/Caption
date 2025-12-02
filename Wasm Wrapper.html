@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Whisper WASM Demo</title>
+<style>body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;margin:20px}pre{white-space:pre-wrap;border:1px solid #ddd;padding:12px;border-radius:8px;min-height:120px}</style>
+</head>
+<body>
+<h1>Whisper WASM Demo (template)</h1>
+<p>Upload an MP3 to transcribe (requires the wasm build from `wrapper.cpp`).</p>
+<input id="fileInput" type="file" accept="audio/*">
+<button id="transBtn">Transcribe</button>
+<pre id="out">(waiting)</pre>
+
+
+<script src="whisper.js"></script>
+<script>
+const input = document.getElementById('fileInput');
+const out = document.getElementById('out');
+document.getElementById('transBtn').onclick = async () => {
+if (!input.files.length) return alert('Pick an audio file');
+out.textContent = 'Initializing...';
+try {
+// The actual API name depends on your wrapper build. Replace Module.transcribe_file with the real function.
+if (!window.Module || !Module.transcribe_file) out.textContent = 'WASM module not loaded or transcribe_file missing.';
+else {
+out.textContent = 'Transcribing (may take time)...';
+const txt = await Module.transcribe_file(input.files[0]);
+out.textContent = txt;
+}
+} catch (e) {
+out.textContent = 'Error: ' + e;
+}
+};
+</script>
+</body>
+</html>
